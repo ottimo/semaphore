@@ -113,7 +113,13 @@ func (t *task) prepareRun() {
 		return
 	}
 
-	if err := t.runGalaxy(); err != nil {
+	if err := t.runGalaxy("collection"); err != nil {
+		t.log("Running galaxy for collection failed: " + err.Error())
+		t.fail()
+		return
+	}
+
+	if err := t.runGalaxy(""); err != nil {
 		t.log("Running galaxy failed: " + err.Error())
 		t.fail()
 		return
@@ -328,8 +334,9 @@ func (t *task) updateRepository() error {
 	return cmd.Run()
 }
 
-func (t *task) runGalaxy() error {
+func (t *task) runGalaxy(g string) error {
 	args := []string{
+		g,
 		"install",
 		"-r",
 		"roles/requirements.yml",
@@ -351,6 +358,8 @@ func (t *task) runGalaxy() error {
 	t.logCmd(cmd)
 	return cmd.Run()
 }
+
+
 
 func (t *task) listPlaybookHosts() (string, error) {
 
